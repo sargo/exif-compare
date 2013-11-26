@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang=en>
+<head>
+    <meta charset=utf-8>
+    <title>Exif compare</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content=""/>
+    <meta name="author" content="STX Next sp. z o.o."/>
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+    
+    <link href="/static/css/normalize.css" media="all" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        body {
+            font-family: latoregular, Helvetica, Arial;
+            background-color: #EEE;
+        }
+        #main {
+            width: 800px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+        #content {
+            padding: 0 2em;
+            border: 1px solid #AAA;
+            background-color: #FFF;
+            
+            border: 1px solid black;
+            clear: both;
+            padding: 0 1em;
+        }
+    </style>
+
+    <script src="/static/js/jquery.min.js"></script>
+    
+    {% block head %}
+    {% endblock head %}
+    
+</head>
+
+<body>
+    <div id="main">
+        <div id="header">
+            <h1>Exif compare</h1>
+        </div>
+        <div id="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
+
+    </div>
+</body>

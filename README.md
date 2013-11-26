@@ -1,2 +1,3 @@
-exif-compare
-============
+# exif compare
+
+Compare exif metadata.
