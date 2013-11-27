@@ -69,7 +69,7 @@ def exif(img_id):
     result = []
     for i, line in enumerate(output.split('\n')):
         if i == 0:
-            line = line.replace(app.config['IMG_DIR'], '')
+            line = line.replace(app.config['IMG_DIR']+'/', '')
         sep = line.find(':')
         if sep >= 0:
             result.append([line[:sep].strip(), line[sep+1:].strip()])

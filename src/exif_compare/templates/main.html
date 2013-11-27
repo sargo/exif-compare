@@ -47,7 +47,7 @@
 
                 $('#exif tr').each(function(index, table_line){
                     if ($(table_line).find('td:first').text() === data_line[0]) {
-                        $(table_line).append('<td>'+data_line[1]+'</td>')
+                        $(table_line).append('<td>'+data_line[1]+'</td>');
                         added = true;
                         return false;
                     }
@@ -58,6 +58,13 @@
                 }
             });
             uploaded++;
+
+            $('#exif tr').each(function(index, table_line){
+                if ($(table_line).find('td').length !== uploaded+1) {
+                    $(table_line).append('<td>&nbsp</td>');
+                }
+            });
+
         });
     }
     function highlight() {
