@@ -1,9 +1,109 @@
 {% extends "base.html" %}
 
 {% block head %}
-  <!-- -->
+    <style>
+    table#exif {
+        margin-left: auto; 
+        margin-right: auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+
+        border: 1px solid #000;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    table#exif tr.highlight{
+        background-color: #FFFFBB;
+    }
+
+    table#exif td{
+        border: 1px solid #000;
+        padding: 5px 10px;
+    }
+    #progress {
+        height: 18px;
+        border: 1px solid #000;
+        margin-top: 15px;
+    }
+    
+    .bar {
+        height: 18px;
+        background: green;
+    }
+    </style>
+
+    <script>
+    var uploaded = 0;
+    
+    String.prototype.repeat = function(times) {
+       return (new Array(times + 1)).join(this);
+    };
+    
+    function load_exif(filename) {
+        $('#exif').hide();     
+        $.getJSON('/api/v1/exif/'+filename, function(data, status){
+            $.each(data, function(index, data_line){
+                var added = false;
+
+                $('#exif tr').each(function(index, table_line){
+                    if ($(table_line).find('td:first').text() === data_line[0]) {
+                        $(table_line).append('<td>'+data_line[1]+'</td>')
+                        added = true;
+                        return false;
+                    }
+                });
+                if (!added) {
+                    var empty_td = '<td>&nbsp</td>'.repeat(uploaded);
+                    $('#exif tbody').append($('<tr><td>'+data_line[0]+'</td>'+empty_td+'<td>'+data_line[1]+'</td></tr>'));
+                }
+            });
+            uploaded++;
+        });
+    }
+    function highlight() {
+        $('#exif tr').each(function(index, line){
+            var to_highlight = false;
+            var value = $(line).find('td:last').text();
+            $(line).find('td').not(':first').not(':last').each(function(index, row){
+                if ($(row).text() !== value)
+                  to_highlight = true;
+            });
+            if (to_highlight)
+                $(line).addClass('highlight');
+        });
+        $('#exif').show();
+    }
+
+    </script>
 {% endblock head %}
 
 {% block content %}
   <h2>Upload</h2>
+
+  <input id="fileupload" type="file" name="file" data-url="/api/v1/upload" multiple>
+
+  <div id="progress">
+    <div class="bar" style="width: 0%;"></div>
+  </div>
+
+  <script>
+  $(function () {
+      $('#fileupload').fileupload({
+          dataType: 'json',
+          done: function(e, data) {
+              load_exif(data.result['name']);
+              $(document).ajaxStop(highlight);
+          },
+          progressall: function(e, data) {
+              var progress = parseInt(data.loaded / data.total * 100, 10);
+              $('#progress .bar').css('width', progress + '%');
+          }
+      });
+  });
+  </script>
+
+
+  <table id="exif">
+    <tbody></tbody>
+  </table>
 {% endblock content %}

@@ -6,7 +6,6 @@
     <meta name="keywords" content="" />
     <meta name="description" content=""/>
     <meta name="author" content="STX Next sp. z o.o."/>
-    <meta name="viewport" content="width=device-width; initial-scale=1.0">
     
     <link href="/static/css/normalize.css" media="all" rel="stylesheet" type="text/css" />
     <style type="text/css">
@@ -15,7 +14,7 @@
             background-color: #EEE;
         }
         #main {
-            width: 800px;
+            width: 1160px;
             margin: 2em auto;
             padding: 0 2em;
         }
@@ -28,9 +27,15 @@
             clear: both;
             padding: 0 1em;
         }
+        #footer {
+            margin-top: 10px;
+        }
     </style>
 
     <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.ui.widget.js"></script>
+    <script src="/static/js/jquery.iframe-transport.js"></script>
+    <script src="/static/js/jquery.fileupload.js"></script>
     
     {% block head %}
     {% endblock head %}
@@ -47,5 +52,9 @@
             {% endblock content %}
         </div>
 
+
+        <div id="footer">
+          Copyright (c) 2013 - Wojciech Lichota and Henk van Leussen. 
+        </div>
     </div>
 </body>
