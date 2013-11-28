@@ -1,3 +1,9 @@
-# exif compare
+# EXIF compare
 
-Compare exif metadata.
+Simple web application for comparing EXIF data of uploaded images.
+
+# Authors
+
+Copyright (c) 2013 Henk van Leussen
+
+Implemented by [Wojciech Lichota](http://lichota.pl)
