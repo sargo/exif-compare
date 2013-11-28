@@ -20,6 +20,9 @@
         border: 1px solid #000;
         padding: 5px 10px;
     }
+    label.hint {
+        font-size: 75%;
+    }
     #progress {
         height: 18px;
         border: 1px solid #000;
@@ -30,6 +33,13 @@
         height: 18px;
         background: green;
     }
+    input[type=file] {
+        width: 120px;
+        color: transparent;
+    }
+    #loading {
+        display: none;
+    }
     </style>
 
     <script>
@@ -39,35 +49,35 @@
        return (new Array(times + 1)).join(this);
     };
     
-    function load_exif(filename) {
-        $('#exif').hide();     
-        $.getJSON('/api/v1/exif/'+filename, function(data, status){
-            $.each(data, function(index, data_line){
-                var added = false;
-
-                $('#exif tr').each(function(index, table_line){
-                    if ($(table_line).find('td:first').text() === data_line[0]) {
-                        $(table_line).append('<td>'+data_line[1]+'</td>');
-                        added = true;
-                        return false;
-                    }
-                });
-                if (!added) {
-                    var empty_td = '<td>&nbsp</td>'.repeat(uploaded);
-                    $('#exif tbody').append($('<tr><td>'+data_line[0]+'</td>'+empty_td+'<td>'+data_line[1]+'</td></tr>'));
-                }
-            });
-            uploaded++;
+    function load_exif(data) {
+        // place each exif line in table
+        $.each(data, function(index, data_line){
+            var added = false;
 
             $('#exif tr').each(function(index, table_line){
-                if ($(table_line).find('td').length !== uploaded+1) {
-                    $(table_line).append('<td>&nbsp</td>');
+                if ($(table_line).find('td:first').text() === data_line[0]) {
+                    $(table_line).append('<td>'+data_line[1]+'</td>');
+                    added = true;
+                    return false;
                 }
             });
-
+            if (!added) {
+                var empty_td = '<td>&nbsp</td>'.repeat(uploaded);
+                $('#exif tbody').append($('<tr><td>'+data_line[0]+'</td>'+empty_td+'<td>'+data_line[1]+'</td></tr>'));
+            }
         });
-    }
-    function highlight() {
+        uploaded++;
+
+        // add empty td to rows not found in this image's exif data
+        $('#exif tr').each(function(index, table_line){
+            if ($(table_line).find('td').length !== uploaded+1) {
+                $(table_line).append('<td>&nbsp</td>');
+            }
+        });
+
+        pressed();
+
+        // hightlight rows with different values
         $('#exif tr').each(function(index, line){
             var to_highlight = false;
             var value = $(line).find('td:last').text();
@@ -78,8 +88,22 @@
             if (to_highlight)
                 $(line).addClass('highlight');
         });
-        $('#exif').show();
     }
+
+    window.pressed = function(){
+        var input = document.getElementById('fileUpload');
+        var label = document.getElementById('fileLabel');
+        if(input.value === "") {
+            if (uploaded > 0) {
+                fileLabel.innerHTML = "Choose next file";
+            } else {
+                fileLabel.innerHTML = "Choose file";
+            }
+        } else {
+            var theSplit = input.value.split('\\');
+            fileLabel.innerHTML = theSplit[theSplit.length-1];
+        }
+    };
 
     </script>
 {% endblock head %}
@@ -87,7 +111,9 @@
 {% block content %}
   <h2>Upload</h2>
 
-  <input id="fileupload" type="file" name="file" data-url="/api/v1/upload" multiple>
+  <input id="fileUpload" type="file" name="file" data-url="/api/v1/upload" onchange="pressed()" multiple>
+  <label id="fileLabel">Choose file</label>
+  <label class="hint">(files will not be stored)</label>
 
   <div id="progress">
     <div class="bar" style="width: 0%;"></div>
@@ -95,11 +121,16 @@
 
   <script>
   $(function () {
-      $('#fileupload').fileupload({
+      $('#fileUpload').fileupload({
           dataType: 'json',
+          start: function(e) {
+              $('#exif').hide();
+              $('#loading').show();
+          },
           done: function(e, data) {
-              load_exif(data.result['name']);
-              $(document).ajaxStop(highlight);
+              load_exif(data.result['exif']);
+              $('#exif').show();
+              $('#loading').hide();
           },
           progressall: function(e, data) {
               var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -109,7 +140,7 @@
   });
   </script>
 
-
+  <p id="loading">Comparing, one moment please</p>
   <table id="exif">
     <tbody></tbody>
   </table>

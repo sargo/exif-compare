@@ -43,23 +43,23 @@ def upload():
         file = request.files['file']
         if file:
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['IMG_DIR'], filename))
+            fullfn = os.path.join(app.config['TMP_DIR'], filename)
+            file.save(fullfn)
 
             result['name'] = os.path.basename(file.filename)
             result['type'] = file.content_type
             result['size'] = get_file_size(file.stream)
+            result['exif'] = get_exif(fullfn)
+
+            os.remove(fullfn)
 
     return result
 
 
-@app.route('/api/v1/exif/<img_id>', methods=['GET'])
-@jsonify
-def exif(img_id):
+def get_exif(filename):
     """
     Returns EXIF data of uploaded image.
     """
-    img_id = os.path.basename(img_id)
-    filename = os.path.join(app.config['IMG_DIR'], img_id)
     cmd = [app.config['EXIV2_EXE'], '-ps', filename]
     try:
         output = subprocess.check_output(cmd)
@@ -69,7 +69,7 @@ def exif(img_id):
     result = []
     for i, line in enumerate(output.split('\n')):
         if i == 0:
-            line = line.replace(app.config['IMG_DIR']+'/', '')
+            line = line.replace(app.config['TMP_DIR']+'/', '')
         sep = line.find(':')
         if sep >= 0:
             result.append([line[:sep].strip(), line[sep+1:].strip()])
@@ -91,14 +91,3 @@ def exif(img_id):
             result.append([parts[0], ''])
 
     return result
-
-
-@app.route('/api/v1/thumb/<img_id>', methods=['GET'])
-@jsonify
-def thumb(img_id):
-    """
-    Returns thumbnail of uploaded image.
-    """
-    return {}
-
-
