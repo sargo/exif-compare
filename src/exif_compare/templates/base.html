@@ -2,7 +2,7 @@
 <html lang=en>
 <head>
     <meta charset=utf-8>
-    <title>Exif compare</title>
+    <title>EXIF compare</title>
     <meta name="keywords" content="" />
     <meta name="description" content=""/>
     <meta name="author" content="STX Next sp. z o.o."/>
@@ -30,6 +30,15 @@
         #footer {
             margin-top: 10px;
         }
+        #copyright {
+            float: left;
+        }
+        #implemented {
+            float: right;
+        }
+        #implemented a {
+            color: #000;
+        }
     </style>
 
     <script src="/static/js/jquery.min.js"></script>
@@ -45,7 +54,7 @@
 <body>
     <div id="main">
         <div id="header">
-            <h1>Exif compare</h1>
+            <h1>EXIF compare</h1>
         </div>
         <div id="content">
             {% block content %}
@@ -54,7 +63,8 @@
 
 
         <div id="footer">
-          Copyright (c) 2013 - Wojciech Lichota and Henk van Leussen. 
+          <div id="copyright">Copyright (c) 2013 - Henk van Leussen</div>
+          <div id="implemented">Implemented by <a href="http://lichota.pl">Wojciech Lichota</a></div>
         </div>
     </div>
 </body>

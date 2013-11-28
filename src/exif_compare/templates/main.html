@@ -37,8 +37,14 @@
         width: 120px;
         color: transparent;
     }
-    #loading {
+    #loading, #reset, #progress {
         display: none;
+    }
+    #reset {
+        text-align: center;
+    }
+    #reset a {
+        color: #000;
     }
     </style>
 
@@ -109,7 +115,8 @@
 {% endblock head %}
 
 {% block content %}
-  <h2>Upload</h2>
+  <p>Upload images to compare EXIF data.</p>
+  <p>Supported formats: ARW, CR2, CRW, DNG, EXV, GIF, JP2, JPEG, MRW, NEF, ORF, PEF, PGF, PNG, PSD, RAF, RW2, SR2, SRW, TIFF</p>
 
   <input id="fileUpload" type="file" name="file" data-url="/api/v1/upload" onchange="pressed()" multiple>
   <label id="fileLabel">Choose file</label>
@@ -126,11 +133,19 @@
           start: function(e) {
               $('#exif').hide();
               $('#loading').show();
+              $('#progress').show();
           },
           done: function(e, data) {
-              load_exif(data.result['exif']);
+              if (data.result['exif'].length > 0) {
+                  load_exif(data.result['exif']);
+                  $('#reset').show();
+              } else {
+                  alert('Unsupported format!');
+              }
               $('#exif').show();
               $('#loading').hide();
+              $('#progress').hide();
+
           },
           progressall: function(e, data) {
               var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -141,6 +156,7 @@
   </script>
 
   <p id="loading">Comparing, one moment please</p>
+  <p id="reset"><a href="/">Reset</a></p>
   <table id="exif">
     <tbody></tbody>
   </table>
