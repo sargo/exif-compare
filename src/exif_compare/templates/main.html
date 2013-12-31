@@ -103,7 +103,7 @@
             if (uploaded > 0) {
                 fileLabel.innerHTML = "Choose next file";
             } else {
-                fileLabel.innerHTML = "Choose file";
+                fileLabel.innerHTML = "Choose file(s)";
             }
         } else {
             var theSplit = input.value.split('\\');
@@ -119,7 +119,7 @@
   <p>Supported formats: ARW, CR2, CRW, DNG, EXV, GIF, JP2, JPEG, MRW, NEF, ORF, PEF, PGF, PNG, PSD, RAF, RW2, SR2, SRW, TIFF</p>
 
   <input id="fileUpload" type="file" name="file" data-url="/api/v1/upload" onchange="pressed()" multiple>
-  <label id="fileLabel">Choose file</label>
+  <label id="fileLabel">Choose file(s)</label>
   <label class="hint">(files will not be stored)</label>
 
   <div id="progress">
